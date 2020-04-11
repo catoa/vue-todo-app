@@ -7,7 +7,14 @@ export default new Vuex.Store({
   state: {
     todos: []
   },
-  // implement mutation that updates the list of todos, CREATE, DELETE, UPDATE, COMPLETE
+  getters: {
+    incompleteTodos: state => {
+      return state.todos.filter(todo => todo.completed === false)
+    },
+    completedTodos: state => {
+      return state.todos.filter(todo => todo.completed === true)
+    }
+  },
   mutations: {
     ADD_TODO(state, todo) {
       state.todos.push(todo)
@@ -24,32 +31,38 @@ export default new Vuex.Store({
       state.todos.splice(deleteIndex, 1)
     }
   },
-  // implement get axios to fetch data from the db.json
   actions: {
-    addTodo({ commit }, todo) {
-      return TodoService.postTodo(todo)
-        .then(resp => {
-          console.log(resp)
-          commit('ADD_TODO', { id: resp.data.id, ...todo })
-        })
-        .catch(error => console.error(error))
+    async addTodo({ commit }, todo) {
+      try {
+        let response = await TodoService.postTodo(todo)
+        commit('ADD_TODO', response.data)
+      } catch (err) {
+        return Error(err.status)
+      }
     },
-    loadTodos({ commit }) {
-      return TodoService.getTodos().then(resp => {
-        commit('LOAD_TODOS', resp.data)
-      })
+    async loadTodos({ commit }) {
+      try {
+        let response = await TodoService.getTodos()
+        commit('LOAD_TODOS', response.data)
+      } catch (err) {
+        return Error(err.status)
+      }
     },
-    toggleTodo({ commit }, todo) {
-      return TodoService.toggleTodo(todo).then(resp => {
-        console.log(resp)
+    async toggleTodo({ commit }, todo) {
+      try {
+        await TodoService.toggleTodo(todo)
         commit('TOGGLE_TODO', todo.id)
-      })
+      } catch (err) {
+        return Error(err.status)
+      }
     },
-    deleteTodo({ commit }, id) {
-      return TodoService.deleteTodo(id).then(resp => {
-        console.log(resp)
+    async deleteTodo({ commit }, id) {
+      try {
+        await TodoService.deleteTodo(id)
         commit('DELETE_TODO', id)
-      })
+      } catch (err) {
+        return Error(err.status)
+      }
     }
   }
   // Also provides a modules property that allows you to

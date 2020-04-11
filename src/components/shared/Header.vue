@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav id="app-navbar" class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">ToDo Manager</a>
     <button
       class="navbar-toggler"
@@ -24,17 +24,6 @@
           <router-link to="/todos" class="nav-link">Todos</router-link>
         </li>
       </ul>
-      <form class="form-inline my-100 my-lg-0">
-        <input
-          class="form-control mr-sm-2"
-          type="search"
-          placeholder="Search"
-          aria-label="Search"
-        />
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
-          Search
-        </button>
-      </form>
     </div>
   </nav>
 </template>
@@ -43,4 +32,8 @@
 export default {}
 </script>
 
-<style></style>
+<style>
+#app-navbar {
+  color: teal;
+}
+</style>

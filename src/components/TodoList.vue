@@ -1,77 +1,58 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col-6">
-        <form class="todo-form form-inline">
-          <div class="form-group">
-            <input
-              type="text"
-              placeholder="What's next"
-              class="form-control m-3"
-              v-model="todo.text"
-            />
-            <button
-              @click.prevent="createTodo()"
-              @keyup.enter="createTodo()"
-              class="btn btn-primary"
-            >
-              Add Todo
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-    <hr />
-    <div class="row">
-      <div class="col-6">
-        <ul class="list-group list-group-flush">
+  <div class="row">
+    <div class="col-6">
+      <ul class="list-group list-group-flush">
+        <transition-group name="fade">
           <li
-            class="list-group-item mr-auto"
-            v-for="(todo, index) in todos"
-            :key="index"
+            class="list-group-item todo-item"
+            v-for="todo in incompleteTodos"
+            :key="todo.id"
           >
-            <div
-              class="todo-item"
+            <input
+              type="checkbox"
+              class="todo-item__checkbox"
+              v-model="todo.completed"
+            />
+            <span
+              class="todo-item__text"
               @click="toggleTodo(todo)"
               :class="{ strike: todo.completed }"
             >
               {{ todo.text }}
-            </div>
+            </span>
             <span class="todo-item__delete-btn" @click="deleteTodo(todo.id)"
               ><feather type="delete"></feather
             ></span>
           </li>
-        </ul>
-      </div>
-      <div class="col-6">
-        <h1>This is where the completed todos will go</h1>
-      </div>
+        </transition-group>
+      </ul>
+    </div>
+    <div class="col-6" v-if="completedTodos.length > 0">
+      <h3>Completed</h3>
+      <small style="color: grey;">Click to mark as incomplete</small>
+      <hr />
+      <ul class="list-group list-group-flush">
+        <li
+          class="list-group-item todo-item__text"
+          v-for="todo in completedTodos"
+          :key="todo.id"
+          @click="toggleTodo(todo)"
+        >
+          {{ todo.text }}
+        </li>
+      </ul>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
-  data: () => ({
-    todo: {
-      text: '',
-      completed: false
-    }
-  }),
-  created() {
-    this.loadTodos()
-  },
   computed: {
-    ...mapState(['todos'])
+    ...mapGetters(['incompleteTodos', 'completedTodos'])
   },
   methods: {
-    ...mapActions(['addTodo', 'loadTodos', 'toggleTodo', 'deleteTodo']),
-    createTodo() {
-      console.log(this.todo)
-      this.addTodo(this.todo)
-      this.todo.text = ''
-    }
+    ...mapActions(['toggleTodo', 'deleteTodo'])
   }
 }
 </script>
@@ -80,14 +61,29 @@ export default {
 .strike {
   text-decoration: line-through;
 }
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
 .todo-item {
   cursor: pointer;
-  display: inline-block;
-  margin-right: 1em;
-}
-.todo-item__delete-btn {
-  position: relative;
-  top: 0.25rem;
-  color: red;
+  .todo-item__checkbox {
+    margin-right: 1.5em;
+  }
+  .todo-item__text {
+    display: inline-block;
+    margin-right: 2em;
+    vertical-align: middle;
+  }
+  .todo-item__delete-btn {
+    position: relative;
+    top: 0.25rem;
+    color: red;
+    vertical-align: middle;
+  }
 }
 </style>

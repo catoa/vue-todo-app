@@ -1,27 +1,35 @@
 <template>
-  <div>
+  <div id="home">
     <h1>{{ todosMsg }}</h1>
-    {{ todosCount }}
+    <router-link :to="{ name: 'todos' }">See your todos</router-link>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Home',
-  data: () => ({
-    msg: 'You have 10 todos'
-  }),
   computed: {
+    ...mapGetters(['incompleteTodos']),
     todosMsg() {
-      return this.$store.state.todos.length
-        ? `You have ${this.$store.state.todos.length} to dos`
-        : `something else`
-    },
-    todosCount() {
-      return this.$store.state.todos.length
+      let incompleteTodosCount = this.incompleteTodos.length
+      if (incompleteTodosCount > 0) {
+        if (incompleteTodosCount === 1) {
+          return 'You have 1 to do'
+        } else {
+          return `You have ${incompleteTodosCount} to dos`
+        }
+      } else {
+        return 'Hooray! You have nothing to do!'
+      }
     }
   }
 }
 </script>
+<style scoped>
+#home {
+  padding: 1em;
+}
+</style>
