@@ -8,7 +8,7 @@
 yarn global add json-server
 ```
 
-###
+### Start the database server
 
 ```
 json-server --watch ./src/data/db.json
